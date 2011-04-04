@@ -1,0 +1,115 @@
+#!/usr/bin/env node
+
+var sys = require('sys'),
+    spawn = require('child_process').spawn;
+
+
+var php = spawn('php', ['-d', 'extension=parsekit.so', __dirname + '/php2js.php', process.argv[2]]),
+    json = '';
+
+php.stdout.on('data', function (data) {
+    json += data;
+});
+
+php.on('exit', function (code) {
+    if (code !== 0) {
+        sys.error('non zero exit code');
+        process.exit(code);
+    }
+    sys.debug(convert('toplevel', JSON.parse(json)));
+});
+
+
+function convert (type, data) {
+    var output = '';
+    if (type === 'toplevel') {
+        var classes = data['class_table'];
+        for (var className in classes) {
+            output += classes[className].doc_comment;
+            output += '\nvar ' + className + ' = function () {\n';
+            output += '};\n\n';
+            var functions = classes[className].function_table;
+            for (var i = 0, l = functions.length; i < l; i++) {
+                output += functions[i].doc_comment + '\n';
+                output += className + '.prototype.' + functions[i].function_name + ' = ' + convertMethod(functions[i]) + ';\n\n';
+            }
+        }
+    }
+    return output;
+}
+
+/*function positionOfArg (name, func) {
+    for (var i = 0; i < func.num_args; i++) {
+        if (func.arg_info[i].name === name) {
+            return i;
+        }
+    }
+}*/
+
+function convertLiteralOp (op) {
+    if (op.type_name !== 'IS_CONST') {
+        throw new Error('TODO op with type_name ' + op.type_name);
+    }
+    if (typeof(op.constant) === 'boolean') {
+        return op.constant ? 'true' : 'false';
+    }
+    else {
+        throw new Error('TODO op type: ' + typeof op.constant);
+    }
+}
+
+// $helper = new BBC_Barlesque_Helper();
+// var helper = new BBC_Barlesque_Helper();
+var opcodeConverters = {
+    ZEND_RECV_INIT: function (opcode, parent) {
+        return '    if (arguments.length ' + (opcode.result.var === 0 ? '===' : '<=') + ' ' + opcode.result.var + ') {\n'
+             + '        ' + opcode.result.varname + ' = ' + convertLiteralOp(opcode.op2) + ';\n'
+             + '    }\n';
+    },
+    //ZEND_FETCH_CLASS: function (opcode) {
+    //    return 'ZEND_FETCH_CLASS: ' + sys.inspect(opcode) + '\n';
+    //},
+    //ZEND_NEW: function (opcode) {
+    //    return 'ZEND_NEW: ' + sys.inspect(opcode) + '\n';
+    //}
+};
+
+function statements (opcodes) {
+    // initially split by line
+    //for (var i = 0, l = opcodes.length;
+}
+
+function todoOpcode (opcode) {
+    return 'TODO: ' + opcode.opcode_name + ': ' + sys.inspect(opcode) + '\n';
+}
+
+function convertArgs (func) {
+    var output = '',
+        first = 1;
+    for (var i = 0, l = func.num_args; i < l; i++) {
+        if (first) {
+            first = ! first;
+        }
+        else {
+            output += ', ';
+        }
+        output += func.arg_info[i].name;
+    }
+    return output;
+}
+
+function convertMethod (func) {
+    var output = 'function (' + convertArgs(func) + ') {\n';
+    for (var i = 0, l = func.opcodes.length; i < l; i++) {
+        var converter = opcodeConverters[func.opcodes[i].opcode_name];
+        if (converter) {
+            output += converter(func.opcodes[i], func);
+        }
+        else {
+            output += todoOpcode(func.opcodes[i]);
+        }
+    }
+    output += '}';
+    return output;
+}
+
