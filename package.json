@@ -1,0 +1,16 @@
+{
+    "name" : "php2js",
+    "description"  : "Library to convert PHP to JavaScript",
+    "version"      : "0.1.0",
+    "engines"      : [ "node >=0.2.5" ],
+    "author"       : "Thomas Yandell <tom.deletethis@yandell.me.uk> (http://tomyandell.wordpress.com/)",
+    "main"         : "./lib/php2js",
+    "directories"  : { "lib" : "./lib" },
+    "depends"      : { "promised-io" : ">= 0.0.1" },
+    "repository" : {
+        "type" : "git",
+        "url"  : "http://github.com/tomyan/php2js.git"
+    },
+    "homepage" : "http://github.com/tomyan/php2js"
+}
+
