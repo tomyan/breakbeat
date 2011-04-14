@@ -6,7 +6,7 @@ var litmus = require('litmus'),
     sys    = require('sys');
 
 exports.test = new litmus.Test('ast tests', function () {
-    this.plan(47);
+    this.plan(61);
 
     var test = this;
     
@@ -24,6 +24,10 @@ exports.test = new litmus.Test('ast tests', function () {
         if ('leftOperand' in against) {
             test.ok(node.leftOperand, against.name + ' has left operand');
             checkNode(node.leftOperand, against.leftOperand);
+        }
+        if ('rightOperand' in against) {
+            test.ok(node.rightOperand, against.name + ' has right operand');
+            checkNode(node.rightOperand, against.rightOperand);
         }
         if ('type' in against) {
             test.isa(node, against.type, against.name + ' type');
