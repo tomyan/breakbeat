@@ -2,7 +2,7 @@
 'use strict';
 
 var litmus = require('litmus'),
-    php2js = require('php2js'),
+    breakbeat = require('breakbeat'),
     sys    = require('sys');
 
 exports.test = new litmus.Test('ast tests', function () {
@@ -38,7 +38,7 @@ exports.test = new litmus.Test('ast tests', function () {
 
     function testAst (code, against) {
         var handle = test.async(against.name);
-        php2js.parseString(code).then(function (ast) {
+        breakbeat.parseString(code).then(function (ast) {
             checkNode(ast, against);
             handle.finish();
         });
@@ -49,7 +49,7 @@ exports.test = new litmus.Test('ast tests', function () {
         'children' : [
             {
                 'name'     : 'empty class',
-                'type'     : php2js.ast.Class,
+                'type'     : breakbeat.ast.Class,
                 'children' : [],
                 'props'    : {
                     'name'      : 'Class_Name',
@@ -64,7 +64,7 @@ exports.test = new litmus.Test('ast tests', function () {
         'children' : [
             {
                 'name'     : 'empty public class',
-                'type'     : php2js.ast.Class,
+                'type'     : breakbeat.ast.Class,
                 'children' : [],
                 'props'    : {
                     'name'      : 'Public_Class_Name',
@@ -79,11 +79,11 @@ exports.test = new litmus.Test('ast tests', function () {
         'children' : [
             {
                 'name'     : 'class with method',
-                'type'     : php2js.ast.Class,
+                'type'     : breakbeat.ast.Class,
                 'children' : [
                     {
                         'name'     : 'method',
-                        'type'     : php2js.ast.Function,
+                        'type'     : breakbeat.ast.Function,
                         'children' : [],
                         'props'    : {
                             'name'      : 'methodName',
@@ -125,7 +125,7 @@ exports.test = new litmus.Test('ast tests', function () {
         'children' : [
             {
                 'name'  : 'simple literal expression',
-                'type'  : php2js.ast.NumericLiteral,
+                'type'  : breakbeat.ast.NumericLiteral,
                 'props' : {
                     'value' : 1
                 }
@@ -138,17 +138,17 @@ exports.test = new litmus.Test('ast tests', function () {
         'children' : [
             {
                 'name'     : 'addition',
-                'type'     : php2js.ast.Addition,
+                'type'     : breakbeat.ast.Addition,
                 'leftOperand' : {
                     'name'  : 'addition left operand',
-                    'type'  : php2js.ast.NumericLiteral,
+                    'type'  : breakbeat.ast.NumericLiteral,
                     'props' : {
                         'value' : 1
                     }
                 },
                 'rightOperand' : {
                     'name'  : 'addition right operand',
-                    'type'  : php2js.ast.NumericLiteral,
+                    'type'  : breakbeat.ast.NumericLiteral,
                     'props' : {
                         'value' : 1
                     }
@@ -162,27 +162,27 @@ exports.test = new litmus.Test('ast tests', function () {
         'children' : [
             {
                 'name'     : 'addition with multiplication - multiplication',
-                'type'     : php2js.ast.Addition,
+                'type'     : breakbeat.ast.Addition,
                 'leftOperand' : {
                     'name'  : 'addition with multiplication - multiplication left operand',
-                    'type'  : php2js.ast.NumericLiteral,
+                    'type'  : breakbeat.ast.NumericLiteral,
                     'props' : {
                         'value' : 1
                     }
                 },
                 'rightOperand' : {
                     'name'     : 'addition with multiplication - addition',
-                    'type'     : php2js.ast.Multiplication,
+                    'type'     : breakbeat.ast.Multiplication,
                     'leftOperand' : {
                         'name'  : 'addition with multiplication - addition left operand',
-                        'type'  : php2js.ast.NumericLiteral,
+                        'type'  : breakbeat.ast.NumericLiteral,
                         'props' : {
                             'value' : 1
                         }
                     },
                     'rightOperand' : {
                         'name'  : 'addition with multiplication - addition right operand',
-                        'type'  : php2js.ast.NumericLiteral,
+                        'type'  : breakbeat.ast.NumericLiteral,
                         'props' : {
                             'value' : 1
                         }

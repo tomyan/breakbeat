@@ -1,7 +1,7 @@
 
 var litmus = require('litmus');
 
-exports.test = new litmus.Suite('PHP2JS Test Suite', [
+exports.test = new litmus.Suite('Breakbeat Test Suite', [
     require('./tree').test
 ]);
 

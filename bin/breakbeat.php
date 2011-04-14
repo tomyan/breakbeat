@@ -24,6 +24,6 @@ foreach ($tokens as $i => $token) {
 echo "\n]\n";
 
 function quoteString ($in) {
-    return '"' . preg_replace('/php2js_backslash/', '\\', preg_replace('/\\t/', '\\t', preg_replace('/\\n/', '\\n', preg_replace('/([\\\"])/', 'php2js_backslash\\1', $in)))) . '"';
+    return '"' . preg_replace('/breakbeat_backslash/', '\\', preg_replace('/\\t/', '\\t', preg_replace('/\\n/', '\\n', preg_replace('/([\\\"])/', 'breakbeat_backslash\\1', $in)))) . '"';
 }
 

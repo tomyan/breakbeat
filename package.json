@@ -1,16 +1,16 @@
 {
-    "name" : "php2js",
+    "name" : "breakbeat",
     "description"  : "Library to convert PHP to JavaScript",
     "version"      : "0.1.0",
     "engines"      : [ "node >=0.2.5" ],
     "author"       : "Thomas Yandell <tom.deletethis@yandell.me.uk> (http://tomyandell.wordpress.com/)",
-    "main"         : "./lib/php2js",
+    "main"         : "./lib/breakbeat",
     "directories"  : { "lib" : "./lib" },
     "depends"      : { "promised-io" : ">= 0.0.1" },
     "repository" : {
         "type" : "git",
-        "url"  : "http://github.com/tomyan/php2js.git"
+        "url"  : "http://github.com/tomyan/breakbeat.git"
     },
-    "homepage" : "http://github.com/tomyan/php2js"
+    "homepage" : "http://github.com/tomyan/breakbeat"
 }
 
