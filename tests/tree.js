@@ -1,9 +1,9 @@
 
 'use strict';
 
-var litmus = require('litmus'),
+var litmus    = require('litmus'),
     breakbeat = require('breakbeat'),
-    sys    = require('sys');
+    sys       = require('sys');
 
 exports.test = new litmus.Test('ast tests', function () {
     this.plan(47);
