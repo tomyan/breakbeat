@@ -6,7 +6,7 @@ var litmus = require('litmus'),
     sys    = require('sys');
 
 exports.test = new litmus.Test('ast tests', function () {
-    this.plan(61);
+    this.plan(47);
 
     var test = this;
     
@@ -24,10 +24,6 @@ exports.test = new litmus.Test('ast tests', function () {
         if ('leftOperand' in against) {
             test.ok(node.leftOperand, against.name + ' has left operand');
             checkNode(node.leftOperand, against.leftOperand);
-        }
-        if ('rightOperand' in against) {
-            test.ok(node.rightOperand, against.name + ' has right operand');
-            checkNode(node.rightOperand, against.rightOperand);
         }
         if ('type' in against) {
             test.isa(node, against.type, against.name + ' type');
@@ -63,16 +59,16 @@ exports.test = new litmus.Test('ast tests', function () {
         ]
     });
 
-    testAst('<?php public class Public_Class_Name { }', {
-        'name' : 'empty public class ast',
+    testAst('<?php abstract class Abstract_Class_Name { }', {
+        'name' : 'empty abstract class ast',
         'children' : [
             {
-                'name'     : 'empty public class',
+                'name'     : 'empty abstract class',
                 'type'     : breakbeat.ast.Class,
                 'children' : [],
                 'props'    : {
-                    'name'      : 'Public_Class_Name',
-                    'modifiers' : { 'public' : true }
+                    'name'      : 'Abstract_Class_Name',
+                    'modifiers' : { 'abstract' : true }
                 }
             }
         ]
