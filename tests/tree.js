@@ -6,7 +6,7 @@ var litmus    = require('litmus'),
     sys       = require('sys');
 
 exports.test = new litmus.Test('ast tests', function () {
-    this.plan(47);
+    this.plan(63);
 
     var test = this;
     
@@ -40,6 +40,32 @@ exports.test = new litmus.Test('ast tests', function () {
         var handle = test.async(against.name);
         breakbeat.parseString(code).then(function (ast) {
             checkNode(ast, against);
+            handle.finish();
+        });
+    }
+
+    function checkOperatorNode (node, against, name) {
+        test.isa(node, against[0], name + ' - type');
+        var op;
+        switch (against[0]) {
+            case breakbeat.ast.NumericLiteral:
+                test.is(node.value, against[1], name + ' - value');
+                break;
+            case breakbeat.ast.Addition:
+            case breakbeat.ast.Multiplication:
+                checkOperatorNode(node.leftOperand, against[1], name + ' - ' + node.type + ' left operand');
+                checkOperatorNode(node.rightOperand, against[2], name + ' - ' + node.type + ' right operand');
+                break;
+                
+            default:
+                throw new Error('unhandled type in operator test');
+        }
+    }
+
+    function testOperators (code, against, name) {
+        var handle = test.async(name);
+        breakbeat.parseString('<?php ' + code + ';').then(function (ast) {
+            checkOperatorNode(ast.children[0], against, name);
             handle.finish();
         });
     }
@@ -191,6 +217,36 @@ exports.test = new litmus.Test('ast tests', function () {
             }
         ] 
     });
+
+    testOperators(
+        '1 + 2 * 3',
+        [
+            breakbeat.ast.Addition,
+            [ breakbeat.ast.NumericLiteral, 1 ],
+            [
+                breakbeat.ast.Multiplication,
+                [ breakbeat.ast.NumericLiteral, 2 ],
+                [ breakbeat.ast.NumericLiteral, 3 ]
+            ]
+        ],
+        'Muliplication has higher precedence than addition'
+    );
+
+    testOperators(
+        '1 * 2 + 3',
+        [
+            breakbeat.ast.Addition,
+            [
+                breakbeat.ast.Multiplication,
+                [ breakbeat.ast.NumericLiteral, 1 ],
+                [ breakbeat.ast.NumericLiteral, 2 ]
+            ],
+            [ breakbeat.ast.NumericLiteral, 3 ]
+        ],
+        'Muliplication has higher precedence than addition before'
+    );
+
 });
+
 
 
