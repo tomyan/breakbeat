@@ -6,7 +6,7 @@ var litmus    = require('litmus'),
     sys       = require('sys');
 
 exports.test = new litmus.Test('ast tests', function () {
-    this.plan(63);
+    this.plan(79);
 
     var test = this;
     
@@ -53,6 +53,8 @@ exports.test = new litmus.Test('ast tests', function () {
                 break;
             case breakbeat.ast.Addition:
             case breakbeat.ast.Multiplication:
+            case breakbeat.ast.Division:
+            case breakbeat.ast.Modulus:
                 checkOperatorNode(node.leftOperand, against[1], name + ' - ' + node.type + ' left operand');
                 checkOperatorNode(node.rightOperand, against[2], name + ' - ' + node.type + ' right operand');
                 break;
@@ -229,7 +231,7 @@ exports.test = new litmus.Test('ast tests', function () {
                 [ breakbeat.ast.NumericLiteral, 3 ]
             ]
         ],
-        'Muliplication has higher precedence than addition'
+        'muliplication has higher precedence than addition'
     );
 
     testOperators(
@@ -243,7 +245,35 @@ exports.test = new litmus.Test('ast tests', function () {
             ],
             [ breakbeat.ast.NumericLiteral, 3 ]
         ],
-        'Muliplication has higher precedence than addition before'
+        'muliplication has higher precedence than addition before'
+    );
+
+    testOperators(
+        '1 * 2 / 3',
+        [
+            breakbeat.ast.Division,
+            [
+                breakbeat.ast.Multiplication,
+                [ breakbeat.ast.NumericLiteral, 1 ],
+                [ breakbeat.ast.NumericLiteral, 2 ]
+            ],
+            [ breakbeat.ast.NumericLiteral, 3 ]
+        ],
+        'division has same precedence as multiplication when after'
+    );
+
+    testOperators(
+        '1 / 2 * 3',
+        [
+            breakbeat.ast.Multiplication,
+            [
+                breakbeat.ast.Division,
+                [ breakbeat.ast.NumericLiteral, 1 ],
+                [ breakbeat.ast.NumericLiteral, 2 ]
+            ],
+            [ breakbeat.ast.NumericLiteral, 3 ]
+        ],
+        'division has same precedence as multiplication when before'
     );
 
 });
