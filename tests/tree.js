@@ -6,7 +6,7 @@ var litmus    = require('litmus'),
     sys       = require('sys');
 
 exports.test = new litmus.Test('ast tests', function () {
-    this.plan(79);
+    this.plan(112);
 
     var test = this;
     
@@ -52,6 +52,8 @@ exports.test = new litmus.Test('ast tests', function () {
                 test.is(node.value, against[1], name + ' - value');
                 break;
             case breakbeat.ast.Addition:
+            case breakbeat.ast.Subtraction:
+            case breakbeat.ast.Concatenation:
             case breakbeat.ast.Multiplication:
             case breakbeat.ast.Division:
             case breakbeat.ast.Modulus:
@@ -276,6 +278,59 @@ exports.test = new litmus.Test('ast tests', function () {
         'division has same precedence as multiplication when before'
     );
 
+    testOperators(
+        '1 / 2 + 3 / 4',
+        [
+            breakbeat.ast.Addition,
+            [
+                breakbeat.ast.Division,
+                [ breakbeat.ast.NumericLiteral, 1 ],
+                [ breakbeat.ast.NumericLiteral, 2 ]
+            ],
+            [
+                breakbeat.ast.Division,
+                [ breakbeat.ast.NumericLiteral, 3 ],
+                [ breakbeat.ast.NumericLiteral, 4 ]
+            ]
+        ],
+        'division has higher precedence than addition (before and after)'
+    );
+
+    testOperators(
+        '1 - 2 + 3 - 4',
+        [
+            breakbeat.ast.Subtraction,
+            [
+                breakbeat.ast.Addition,
+                [
+                    breakbeat.ast.Subtraction,
+                    [ breakbeat.ast.NumericLiteral, 1 ],
+                    [ breakbeat.ast.NumericLiteral, 2 ]
+                ],
+                [ breakbeat.ast.NumericLiteral, 3 ]
+            ],
+            [ breakbeat.ast.NumericLiteral, 4 ]
+        ],
+        'subtraction has same precedence as addition (before and after)'
+    );
+    
+    testOperators(
+        '1 . 2 + 3 . 4',
+        [
+            breakbeat.ast.Concatenation,
+            [
+                breakbeat.ast.Addition,
+                [
+                    breakbeat.ast.Concatenation,
+                    [ breakbeat.ast.NumericLiteral, 1 ],
+                    [ breakbeat.ast.NumericLiteral, 2 ]
+                ],
+                [ breakbeat.ast.NumericLiteral, 3 ]
+            ],
+            [ breakbeat.ast.NumericLiteral, 4 ]
+        ],
+        'concatentation has same precedence as addition (before and after)'
+    );
 });
 
 
